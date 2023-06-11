@@ -2,34 +2,38 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, EmailStr
 
-class ProveedoresSchema(BaseModel):
-    Nombre: str = Field(...)
+class ClientesSchema(BaseModel):
     Telefono: str = Field(...)
+    Nombre: str = Field(...)
     Email: EmailStr = Field(...)
+    Direccion: str = Field(...)
     Estado: str = Field(...)
-    
+
     class Config:
         schema_extra = {
             "example": {
-                "Nombre": "Los tristes",
                 "Telefono": "123456789",
-                "Email":  "tristes@x.edu.com",
+                "Nombre": "Jeanette Lynn",
+                "Email":  "tellus.id@yahoo.com",
+                "Direccion": "Ap #651-8679 Sodales. Av.",
                 "Estado": "Ciudad de México",
             }
         }
-        
-class UpdateProveedoresModel(BaseModel):
-    Nombre: Optional[str]
+
+class UpdateClientesModel(BaseModel):
     Telefono: Optional[str]
+    Nombre: Optional[str]
     Email: Optional[EmailStr]
+    Direccion: Optional[str]
     Estado: Optional[str]
-    
+
     class Config:
         schema_extra = {
             "example": {
-                "Nombre": "Los tristes 21",
                 "Telefono": "123456789",
-                "Email":  "exa@x.edu.com",
+                "Nombre": "Jeanette Lynn",
+                "Email":  "tellus.id@yahoo.com",
+                "Direccion": "Ap #651-8679 Sodales. Av.",
                 "Estado": "Ciudad de México",
             }
         }
