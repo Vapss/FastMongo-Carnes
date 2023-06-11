@@ -41,23 +41,23 @@ def pedido_helper(pedido) -> dict:
         "Cliente": pedido["Cliente"],
         "Num_pedido": pedido["Num_pedido"],
         "Producto": pedido["Producto"],
-        "Cantidad(KG)": pedido["Cantidad(KG)"],
+        "CantidadKG": pedido["CantidadKG"],
     }
 
 def producto_helper(producto) -> dict:
     return {
         "id": str(producto["_id"]),
-        "Producto": producto["Producto"],
+        "Nombre": producto["Nombre"],
         "Precio": producto["Precio"],
-        "Peso": producto["Peso"],
+        "PesoKG": producto["PesoKG"],
         "Distribuidor": producto["Distribuidor"],
         "Tienda": producto["Tienda"],
     }
 
-def tiendas_helper(tiendas) -> dict:
+def tienda_helper(tiendas) -> dict:
     return {
         "id": str(tiendas["_id"]),
-        "Tienda": tiendas["Tienda"],
+        "Nombre": tiendas["Nombre"],
         "Direccion": tiendas["Direccion"],
         "Estado": tiendas["Estado"],
         "Distribuidor": tiendas["Distribuidor"],
