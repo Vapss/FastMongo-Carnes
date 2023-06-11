@@ -9,6 +9,9 @@ database = client.proveedores
 
 proveedor_collection = database.get_collection("proveedores_collection")
 cliente_collection = database.get_collection("clientes_collection")
+pedido_collection = database.get_collection("pedidos_collection")
+producto_collection = database.get_collection("productos_collection")
+tienda_collection = database.get_collection("tiendas_collection")
 
 # helpers
 
@@ -30,6 +33,34 @@ def cliente_helper(cliente) -> dict:
             "Email": cliente["Email"],
             "Direccion": cliente["Direccion"],
             "Estado": cliente["Estado"],
+    }
+
+def pedido_helper(pedido) -> dict:
+    return {
+        "id": str(pedido["_id"]),
+        "Cliente": pedido["Cliente"],
+        "Num_pedido": pedido["Num_pedido"],
+        "Producto": pedido["Producto"],
+        "Cantidad(KG)": pedido["Cantidad(KG)"],
+    }
+
+def producto_helper(producto) -> dict:
+    return {
+        "id": str(producto["_id"]),
+        "Producto": producto["Producto"],
+        "Precio": producto["Precio"],
+        "Peso": producto["Peso"],
+        "Distribuidor": producto["Distribuidor"],
+        "Tienda": producto["Tienda"],
+    }
+
+def tiendas_helper(tiendas) -> dict:
+    return {
+        "id": str(tiendas["_id"]),
+        "Tienda": tiendas["Tienda"],
+        "Direccion": tiendas["Direccion"],
+        "Estado": tiendas["Estado"],
+        "Distribuidor": tiendas["Distribuidor"],
     }
 
 # CRUD Operations
@@ -109,4 +140,119 @@ async def delete_cliente(id: str):
     cliente = await cliente_collection.find_one({"_id": ObjectId(id)})
     if cliente:
         await cliente_collection.delete_one({"_id": ObjectId(id)})
+        return True
+
+
+# Pedidos Collection
+async def retrieve_pedidos():
+    pedidos = []
+    async for pedido in pedido_collection.find():
+        pedidos.append(pedido_helper(pedido))
+    return pedidos
+
+# Add a new pedido into to the database
+async def add_pedido(pedido_data: dict) -> dict:
+    pedido = await pedido_collection.insert_one(pedido_data)
+    new_pedido = await pedido_collection.find_one({"_id": pedido.inserted_id})
+    return pedido_helper(new_pedido)
+
+# Retrieve a pedido with a matching ID
+async def retrieve_pedido(id: str) -> dict:
+    pedido = await pedido_collection.find_one({"_id": ObjectId(id)})
+    if pedido:
+        return pedido_helper(pedido)
+
+# Update a pedido with a matching ID
+async def update_pedido(id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if not data:
+        return False
+    pedido = await pedido_collection.find_one({"_id": ObjectId(id)})
+    if pedido:
+        update_pedido = await pedido_collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": data}
+        )
+        return bool(update_pedido)
+
+# Delete a pedido from the database
+async def delete_pedido(id: str):
+    pedido = await pedido_collection.find_one({"_id": ObjectId(id)})
+    if pedido:
+        await pedido_collection.delete_one({"_id": ObjectId(id)})
+        return True
+
+# Productos Collection
+async def retrieve_productos():
+    productos = []
+    async for producto in producto_collection.find():
+        productos.append(producto_helper(producto))
+    return productos
+
+# Add a new producto into to the database
+async def add_producto(producto_data: dict) -> dict:
+    producto = await producto_collection.insert_one(producto_data)
+    new_producto = await producto_collection.find_one({"_id": producto.inserted_id})
+    return producto_helper(new_producto)
+
+# Retrieve a producto with a matching ID
+async def retrieve_producto(id: str) -> dict:
+    producto = await producto_collection.find_one({"_id": ObjectId(id)})
+    if producto:
+        return producto_helper(producto)
+
+# Update a producto with a matching ID
+async def update_producto(id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if not data:
+        return False
+    producto = await producto_collection.find_one({"_id": ObjectId(id)})
+    if producto:
+        update_producto = await producto_collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": data}
+        )
+        return bool(update_producto)
+
+# Delete a producto from the database
+async def delete_producto(id: str):
+    producto = await producto_collection.find_one({"_id": ObjectId(id)})
+    if producto:
+        await producto_collection.delete_one({"_id": ObjectId(id)})
+        return True
+
+# Tiendas Collection
+async def retrieve_tiendas():
+    tiendas = []
+    async for tienda in tienda_collection.find():
+        tiendas.append(tienda_helper(tienda))
+    return tiendas
+
+# Add a new tienda into to the database
+async def add_tienda(tienda_data: dict) -> dict:
+    tienda = await tienda_collection.insert_one(tienda_data)
+    new_tienda = await tienda_collection.find_one({"_id": tienda.inserted_id})
+    return tienda_helper(new_tienda)
+
+# Retrieve a tienda with a matching ID
+async def retrieve_tienda(id: str) -> dict:
+    tienda = await tienda_collection.find_one({"_id": ObjectId(id)})
+    if tienda:
+        return tienda_helper(tienda)
+
+# Update a tienda with a matching ID
+async def update_tienda(id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if not data:
+        return False
+    tienda = await tienda_collection.find_one({"_id": ObjectId(id)})
+    if tienda:
+        update_tienda = await tienda_collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": data}
+        )
+        return bool(update_tienda)
+
+# Delete a tienda from the database
+async def delete_tienda(id: str):
+    tienda = await tienda_collection.find_one({"_id": ObjectId(id)})
+    if tienda:
+        await tienda_collection.delete_one({"_id": ObjectId(id)})
         return True
