@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, EmailStr
 
 class ClientesSchema(BaseModel):
+    ClienteId: str = Field(...)
     Telefono: str = Field(...)
     Nombre: str = Field(...)
     Email: EmailStr = Field(...)
@@ -12,6 +13,7 @@ class ClientesSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                "ClienteId": "1",
                 "Telefono": "123456789",
                 "Nombre": "Jeanette Lynn",
                 "Email":  "tellus.id@yahoo.com",

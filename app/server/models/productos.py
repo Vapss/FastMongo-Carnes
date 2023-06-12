@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, EmailStr
 
 class ProductosSchema(BaseModel):
+    ProductoId: str = Field(...)
     Nombre: str = Field(...)
     Precio: str = Field(...)
     PesoKG: str = Field(...)
@@ -12,6 +13,7 @@ class ProductosSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                "ProductoId": "1",
                 "Nombre": "1",
                 "Precio": "1",
                 "PesoKG": "1",
@@ -45,4 +47,3 @@ def ResponseModel(data, message):
 
 def ErrorResponseModel(error, code, message):
     return {"error": error, "code": code, "message": message}
-    

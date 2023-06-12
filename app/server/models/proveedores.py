@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, EmailStr
 
 class ProveedoresSchema(BaseModel):
+    ProveedorId: str = Field(...)
     Nombre: str = Field(...)
     Telefono: str = Field(...)
     Email: EmailStr = Field(...)
@@ -11,6 +12,7 @@ class ProveedoresSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                "ProveedorId": "1",
                 "Nombre": "Los tristes",
                 "Telefono": "123456789",
                 "Email":  "tristes@x.edu.com",

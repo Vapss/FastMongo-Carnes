@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, EmailStr
 
 class TiendasSchema(BaseModel):
+    TiendaID: str = Field(...)
     Nombre: str = Field(...)
     Direccion: str = Field(...)
     Estado: str = Field(...)
@@ -11,6 +12,7 @@ class TiendasSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                "TiendaID": "1",
                 "Nombre": "Matriz",
                 "Direccion": "Avenida Siempre Viva 742",
                 "Estado": "CDMX",

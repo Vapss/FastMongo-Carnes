@@ -19,6 +19,7 @@ tienda_collection = database.get_collection("tiendas_collection")
 def proveedor_helper(proveedor) -> dict:
     return {
         "id": str(proveedor["_id"]),
+        "ProveedorId": proveedor["ProveedorId"],
         "Nombre": proveedor["Nombre"],
         "Telefono": proveedor["Telefono"],
         "Email": proveedor["Email"],
@@ -28,6 +29,7 @@ def proveedor_helper(proveedor) -> dict:
 def cliente_helper(cliente) -> dict:
     return {    
             "id": str(cliente["_id"]),
+            "ClienteId": cliente["ClienteId"],
             "Telefono": cliente["Telefono"],
             "Nombre": cliente["Nombre"],
             "Email": cliente["Email"],
@@ -38,15 +40,20 @@ def cliente_helper(cliente) -> dict:
 def pedido_helper(pedido) -> dict:
     return {
         "id": str(pedido["_id"]),
+        "PedidoId": pedido["PedidoId"],
         "Cliente": pedido["Cliente"],
-        "Num_pedido": pedido["Num_pedido"],
+        "Proveedor": pedido["Proveedor"],
+        "Tienda": pedido["Tienda"],
         "Producto": pedido["Producto"],
         "CantidadKG": pedido["CantidadKG"],
+        "Fecha_pedido": pedido["Fecha_pedido"],
+        "Fecha_entrega": pedido["Fecha_entrega"],
     }
 
 def producto_helper(producto) -> dict:
     return {
         "id": str(producto["_id"]),
+        "ProductoId": producto["ProductoId"],
         "Nombre": producto["Nombre"],
         "Precio": producto["Precio"],
         "PesoKG": producto["PesoKG"],
@@ -57,6 +64,7 @@ def producto_helper(producto) -> dict:
 def tienda_helper(tiendas) -> dict:
     return {
         "id": str(tiendas["_id"]),
+        "TiendaId": tiendas["TiendaId"],
         "Nombre": tiendas["Nombre"],
         "Direccion": tiendas["Direccion"],
         "Estado": tiendas["Estado"],
@@ -161,6 +169,71 @@ async def retrieve_pedido(id: str) -> dict:
     pedido = await pedido_collection.find_one({"_id": ObjectId(id)})
     if pedido:
         return pedido_helper(pedido)
+
+# Retrieve pedido with agreggate function
+async def retrieve_pedido_aggregate() :
+    pipeline = [
+        {
+            '$lookup': {
+                'from': 'productos_collection', 
+                'localField': 'Producto', 
+                'foreignField': 'ProductoId', 
+                'as': 'Producto'
+            }
+        }, {
+            '$unwind': {
+                'path': '$Producto', 
+                'preserveNullAndEmptyArrays': False
+            }
+        }, {
+            '$lookup': {
+                'from': 'proveedores_collection', 
+                'localField': 'Proveedor', 
+                'foreignField': 'ProveedorId', 
+                'as': 'Proveedor'
+            }
+        }, {
+            '$unwind': {
+                'path': '$Proveedor', 
+                'preserveNullAndEmptyArrays': False
+            }
+        }, {
+            '$lookup': {
+                'from': 'clientes_collection', 
+                'localField': 'Cliente', 
+                'foreignField': 'ClienteId', 
+                'as': 'Cliente'
+            }
+        }, {
+            '$unwind': {
+                'path': '$Cliente', 
+                'preserveNullAndEmptyArrays': False
+            }
+        }, {
+            '$lookup': {
+                'from': 'tiendas_collection', 
+                'localField': 'Tienda', 
+                'foreignField': 'TiendaId', 
+                'as': 'Tienda'
+            }
+        }, {
+            '$unwind': {
+                'path': '$Tienda', 
+                'preserveNullAndEmptyArrays': False
+            }
+        }, {
+            '$project': {
+                'Cliente': '$Cliente.Nombre', 
+                'Proveedor': '$Proveedor.Nombre', 
+                'Tienda': '$Tienda.Nombre', 
+                'Producto': '$Producto.Nombre', 
+            }
+        }
+    ]
+    pedidos = []
+    async for pedido in pedido_collection.aggregate(pipeline):
+        pedidos.append(pedido)
+    return pedidos
 
 # Update a pedido with a matching ID
 async def update_pedido(id: str, data: dict):

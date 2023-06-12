@@ -6,7 +6,8 @@ from server.database import (
     add_pedido,
     retrieve_pedido,
     update_pedido,
-    delete_pedido
+    delete_pedido,
+    retrieve_pedido_aggregate
 )
 
 from server.models.pedidos import (
@@ -27,6 +28,13 @@ async def add_pedido_data(pedido: PedidosSchema = Body(...)):
 @router.get("/", response_description="Pedidos retrieved")
 async def get_pedidos():
     pedidos = await retrieve_pedidos()
+    if pedidos:
+        return ResponseModel(pedidos, "Pedidos data retrieved successfully")
+    return ResponseModel(pedidos, "Empty list returned")
+
+@router.get("/aggregate", response_description="Pedidos retrieved")
+async def get_pedidos_aggregate():
+    pedidos = await retrieve_pedido_aggregate()
     if pedidos:
         return ResponseModel(pedidos, "Pedidos data retrieved successfully")
     return ResponseModel(pedidos, "Empty list returned")
